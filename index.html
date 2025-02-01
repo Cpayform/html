@@ -11,8 +11,11 @@
       const pairs = queryString.split("&");
       pairs.forEach(pair => {
         if (pair) {
-          const [key, value] = pair.split("=");
-          params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+          let [key, value] = pair.split("=");
+          // Replace '+' with a space before decoding
+          key = decodeURIComponent(key);
+          value = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : "";
+          params[key] = value;
         }
       });
       return params;
