@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>cPay Payment Redirect</title>
+  <script>
+    // Utility function to parse query parameters into an object
+    function getQueryParams() {
+      const params = {};
+      const queryString = window.location.search.substring(1);
+      const pairs = queryString.split("&");
+      pairs.forEach(pair => {
+        if (pair) {
+          const [key, value] = pair.split("=");
+          params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+        }
+      });
+      return params;
+    }
+
+    // Populate the hidden form fields from query parameters
+    function populateFormFields() {
+      const params = getQueryParams();
+      // List of expected field names that cPay expects
+      const fieldNames = [
+        "AmountToPay",
+        "AmountCurrency",
+        "Details1",
+        "Details2",
+        "PayToMerchant",
+        "MerchantName",
+        "PaymentOKURL",
+        "PaymentFailURL",
+        "CheckSum",
+        "CheckSumHeader"
+      ];
+
+      fieldNames.forEach(fieldName => {
+        // Find the input field by name and set its value if available in the query params
+        const input = document.querySelector(`input[name="${fieldName}"]`);
+        if (input && params[fieldName]) {
+          input.value = params[fieldName];
+        }
+      });
+    }
+
+    // On page load, populate the form and auto-submit it
+    window.onload = function() {
+      populateFormFields();
+      // Optionally, delay submission briefly (e.g., 300ms) to ensure fields are populated
+      setTimeout(() => {
+        document.getElementById("cpayForm").submit();
+      }, 300);
+    };
+  </script>
+</head>
+<body>
+  <!-- The form posts to the cPay endpoint. Adjust the action URL if needed. -->
+  <form id="cpayForm" action="https://www.cpay.com.mk/Client/page/default.aspx?xml_id=/en-US/.TestLoginToPay/" method="POST">
+    <!-- Hidden fields for cPay data -->
+    <input type="hidden" name="AmountToPay" value="">
+    <input type="hidden" name="AmountCurrency" value="">
+    <input type="hidden" name="Details1" value="">
+    <input type="hidden" name="Details2" value="">
+    <input type="hidden" name="PayToMerchant" value="">
+    <input type="hidden" name="MerchantName" value="">
+    <input type="hidden" name="PaymentOKURL" value="">
+    <input type="hidden" name="PaymentFailURL" value="">
+    <input type="hidden" name="CheckSum" value="">
+    <input type="hidden" name="CheckSumHeader" value="">
+
+    <!-- In case JavaScript is disabled, show a submit button -->
+    <noscript>
+      <input type="submit" value="Continue to Payment">
+    </noscript>
+  </form>
+</body>
+</html>
