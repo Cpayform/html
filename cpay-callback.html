@@ -1,0 +1,14 @@
+// Within the mapWixToCpay() function in cPay2.js:
+
+// Build PaymentOKURL and PaymentFailURL using the GitHub Pages callback page.
+const orderIdForUrl = wixData?.order?._id || "default";
+const appSectionParams = encodeURIComponent(JSON.stringify({ objectType: "order", origin: "checkout" }));
+
+const PaymentOKURL = `https://yourusername.github.io/cpay-callback.html?status=ok&orderId=${orderIdForUrl}&appSectionParams=${appSectionParams}`;
+const PaymentFailURL = `https://yourusername.github.io/cpay-callback.html?status=failed&orderId=${orderIdForUrl}&appSectionParams=${appSectionParams}`;
+
+const cPayData = {
+  // ... (rest of your mapping as before)
+  PaymentOKURL: PaymentOKURL,
+  PaymentFailURL: PaymentFailURL
+};
