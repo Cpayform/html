@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CPAY Callback</title>
+  <script>
+    window.onload = function () {
+      // Parse query parameters.
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get("status");  // expected "ok" or "failed"
+      const orderId = params.get("orderId") || "default";
+      const appSectionParams = params.get("appSectionParams");
+
+      // Determine the target URL based on the status.
+      let targetUrl = "";
+      if (status === "failed") {
+        targetUrl = "https://www.mnmlbynana.com/payment-failed";
+      } else {
+        targetUrl = `https://www.mnmlbynana.com/thank-you-page/${orderId}`;
+        if (appSectionParams) {
+          targetUrl += `?appSectionParams=${encodeURIComponent(appSectionParams)}`;
+        }
+      }
+
+      console.log("Redirecting user to:", targetUrl);
+      // Redirect the browser.
+      window.location.href = targetUrl;
+    }
+  </script>
+</head>
+<body>
+  <p>Please wait while we redirect you...</p>
+</body>
+</html>
