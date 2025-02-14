@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>cPay Payment Redirect</title>
   <script>
-    // Utility function to parse query parameters into an object
+    // Utility function to parse query parameters into an object.
     function getQueryParams() {
       const params = {};
       const queryString = window.location.search.substring(1);
@@ -12,7 +12,6 @@
       pairs.forEach(pair => {
         if (pair) {
           let [key, value] = pair.split("=");
-          // Replace '+' with a space before decoding
           key = decodeURIComponent(key);
           value = value ? decodeURIComponent(value.replace(/\+/g, ' ')) : "";
           params[key] = value;
@@ -21,10 +20,9 @@
       return params;
     }
 
-    // Populate the hidden form fields from query parameters
+    // Populate the hidden form fields from query parameters.
     function populateFormFields() {
       const params = getQueryParams();
-      // List of expected field names that cPay expects
       const fieldNames = [
         "AmountToPay",
         "AmountCurrency",
@@ -39,7 +37,6 @@
       ];
 
       fieldNames.forEach(fieldName => {
-        // Find the input field by name and set its value if available in the query params
         const input = document.querySelector(`input[name="${fieldName}"]`);
         if (input && params[fieldName]) {
           input.value = params[fieldName];
@@ -47,10 +44,9 @@
       });
     }
 
-    // On page load, populate the form and auto-submit it
     window.onload = function() {
       populateFormFields();
-      // Optionally, delay submission briefly (e.g., 300ms) to ensure fields are populated
+      // Delay submission slightly to ensure fields are populated.
       setTimeout(() => {
         document.getElementById("cpayForm").submit();
       }, 300);
@@ -58,9 +54,8 @@
   </script>
 </head>
 <body>
-  <!-- The form posts to the cPay endpoint. Adjust the action URL if needed. -->
-  <form id="cpayForm" action="https://www.cpay.com.mk/client/Page/default.aspx?xml_id=/en-US/.loginToPay/.simple/" method="POST">
-    <!-- Hidden fields for cPay data -->
+  <!-- The form now posts to your proxy endpoint on your domain -->
+  <form id="cpayForm" action="https://www.mnmlbynana.com/_functions/cpayFormProxy" method="POST">
     <input type="hidden" name="AmountToPay" value="">
     <input type="hidden" name="AmountCurrency" value="">
     <input type="hidden" name="Details1" value="">
@@ -71,8 +66,6 @@
     <input type="hidden" name="PaymentFailURL" value="">
     <input type="hidden" name="CheckSum" value="">
     <input type="hidden" name="CheckSumHeader" value="">
-
-    <!-- In case JavaScript is disabled, show a submit button -->
     <noscript>
       <input type="submit" value="Continue to Payment">
     </noscript>
