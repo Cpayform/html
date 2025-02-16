@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Payment OK</title>
+  <script>
+    window.onload = function() {
+      // Parse the query params if you need them
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("orderId") || "default";
+      const appSectionParams = params.get("appSectionParams");
+      
+      // Build the final redirect URL on your main site
+      let targetUrl = `https://www.mnmlbynana.com/thank-you-page/${orderId}`;
+      if (appSectionParams) {
+        targetUrl += `?appSectionParams=${encodeURIComponent(appSectionParams)}`;
+      }
+
+      console.log("Redirecting to:", targetUrl);
+      window.location.href = targetUrl;
+    }
+  </script>
+</head>
+<body>
+  <p>Redirecting to the thank-you page...</p>
+</body>
+</html>
