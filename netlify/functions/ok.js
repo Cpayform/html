@@ -1,15 +1,18 @@
 // File: netlify/functions/ok.js
-
 exports.handler = async function(event, context) {
-  // Accept both GET and POST methods
-  if (event.httpMethod === 'POST' || event.httpMethod === 'GET') {
-    // Log the incoming request body for debugging
-    console.log("Payment OK Callback received. Raw data:", event.body);
+  try {
+    // Log the entire raw request body (if any)
+    console.log("Raw request body:", event.body);
     
-    // Extract query parameters (Netlify passes them in event.queryStringParameters)
+    // Log the query parameters that were passed in the URL
+    console.log("Query parameters:", event.queryStringParameters);
+
+    // (Optional) If you expect JSON data in the POST body, you can parse it:
+    // const parsedBody = event.body ? JSON.parse(event.body) : {};
+    // console.log("Parsed request body:", parsedBody);
+
+    // Continue with your normal logic...
     const { orderId, orderNumber, appSectionParams } = event.queryStringParameters || {};
-    
-    // Build the final URL to redirect the user on your main site
     let finalUrl = `https://www.mnmlbynana.com/thank-you-page/${orderId || "default"}`;
     if (orderNumber) {
       finalUrl += `?orderNumber=${orderNumber}`;
@@ -19,7 +22,6 @@ exports.handler = async function(event, context) {
     }
     console.log("Redirecting to:", finalUrl);
     
-    // Return an HTML response that auto-redirects the user
     return {
       statusCode: 200,
       headers: { "Content-Type": "text/html" },
@@ -37,10 +39,8 @@ exports.handler = async function(event, context) {
         </html>
       `
     };
-  } else {
-    return {
-      statusCode: 405,
-      body: "Method Not Allowed"
-    };
+  } catch (err) {
+    console.error("Error in OK function:", err);
+    return { statusCode: 500, body: "Internal Server Error" };
   }
 };
