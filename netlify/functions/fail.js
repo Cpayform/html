@@ -1,17 +1,16 @@
 // File: netlify/functions/fail.js
-export default async function handler(event, context) {
+
+exports.handler = async function(event, context) {
   if (event.httpMethod === 'POST' || event.httpMethod === 'GET') {
-    console.log("Payment Fail Callback received. Raw body:", event.body);
+    console.log("Payment Fail Callback received. Raw data:", event.body);
     
-    // For failed payment, simply redirect to a static payment-failed page on your main site.
+    // For a failed payment, simply redirect to your static payment-failed page on your main site.
     const finalUrl = "https://www.mnmlbynana.com/payment-failed";
     console.log("Redirecting to:", finalUrl);
     
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "text/html"
-      },
+      headers: { "Content-Type": "text/html" },
       body: `
         <!DOCTYPE html>
         <html>
@@ -32,4 +31,4 @@ export default async function handler(event, context) {
       body: "Method Not Allowed"
     };
   }
-}
+};
