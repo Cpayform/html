@@ -1,13 +1,24 @@
 // File: netlify/functions/fail.js
 
 exports.handler = async function(event, context) {
-  if (event.httpMethod === 'POST' || event.httpMethod === 'GET') {
-    console.log("Payment Fail Callback received. Raw data:", event.body);
-    
-    // For a failed payment, simply redirect to your static payment-failed page on your main site.
+  try {
+    // Log the HTTP method and raw POST data sent by CPAY
+    console.log("Payment Fail Callback - HTTP Method:", event.httpMethod);
+    console.log("Payment Fail Callback - Raw Body:", event.body);
+
+    // Optionally parse JSON if applicable
+    let parsedData;
+    try {
+      parsedData = event.body ? JSON.parse(event.body) : {};
+      console.log("Payment Fail Callback - Parsed Body:", parsedData);
+    } catch (err) {
+      console.log("Payment Fail Callback - Body is not JSON, using raw text.");
+    }
+
+    // For a failed payment, simply redirect to your static payment-failed page.
     const finalUrl = "https://www.mnmlbynana.com/payment-failed";
-    console.log("Redirecting to:", finalUrl);
-    
+    console.log("Payment Fail Callback - Redirecting to:", finalUrl);
+
     return {
       statusCode: 200,
       headers: { "Content-Type": "text/html" },
@@ -16,7 +27,9 @@ exports.handler = async function(event, context) {
         <html>
         <head>
           <meta http-equiv="refresh" content="0; url=${finalUrl}" />
-          <script>window.location.href = "${finalUrl}";</script>
+          <script>
+            window.location.href = "${finalUrl}";
+          </script>
           <title>Redirecting...</title>
         </head>
         <body>
@@ -25,10 +38,11 @@ exports.handler = async function(event, context) {
         </html>
       `
     };
-  } else {
+  } catch (err) {
+    console.error("Error in Payment Fail Callback:", err);
     return {
-      statusCode: 405,
-      body: "Method Not Allowed"
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal Server Error", details: err.message })
     };
   }
 };
