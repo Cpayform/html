@@ -1,18 +1,24 @@
 // File: netlify/functions/ok.js
+
 exports.handler = async function(event, context) {
   try {
-    // Log the entire raw request body (if any)
-    console.log("Raw request body:", event.body);
-    
-    // Log the query parameters that were passed in the URL
-    console.log("Query parameters:", event.queryStringParameters);
+    // Log the HTTP method and raw POST data sent by CPAY
+    console.log("Payment OK Callback - HTTP Method:", event.httpMethod);
+    console.log("Payment OK Callback - Raw Body:", event.body);
 
-    // (Optional) If you expect JSON data in the POST body, you can parse it:
-    // const parsedBody = event.body ? JSON.parse(event.body) : {};
-    // console.log("Parsed request body:", parsedBody);
+    // Optionally, if CPAY sends JSON data, you can try to parse it:
+    let parsedData;
+    try {
+      parsedData = event.body ? JSON.parse(event.body) : {};
+      console.log("Payment OK Callback - Parsed Body:", parsedData);
+    } catch (err) {
+      console.log("Payment OK Callback - Body is not JSON, using raw text.");
+    }
 
-    // Continue with your normal logic...
+    // Extract query parameters from the URL (if any)
     const { orderId, orderNumber, appSectionParams } = event.queryStringParameters || {};
+
+    // Build the final URL to redirect the user on your main site.
     let finalUrl = `https://www.mnmlbynana.com/thank-you-page/${orderId || "default"}`;
     if (orderNumber) {
       finalUrl += `?orderNumber=${orderNumber}`;
@@ -20,8 +26,9 @@ exports.handler = async function(event, context) {
         finalUrl += `&appSectionParams=${appSectionParams}`;
       }
     }
-    console.log("Redirecting to:", finalUrl);
-    
+    console.log("Payment OK Callback - Redirecting to:", finalUrl);
+
+    // Return an HTML page that auto-redirects the user
     return {
       statusCode: 200,
       headers: { "Content-Type": "text/html" },
@@ -30,7 +37,9 @@ exports.handler = async function(event, context) {
         <html>
         <head>
           <meta http-equiv="refresh" content="0; url=${finalUrl}" />
-          <script>window.location.href = "${finalUrl}";</script>
+          <script>
+            window.location.href = "${finalUrl}";
+          </script>
           <title>Redirecting...</title>
         </head>
         <body>
@@ -40,7 +49,10 @@ exports.handler = async function(event, context) {
       `
     };
   } catch (err) {
-    console.error("Error in OK function:", err);
-    return { statusCode: 500, body: "Internal Server Error" };
+    console.error("Error in Payment OK Callback:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal Server Error", details: err.message })
+    };
   }
 };
