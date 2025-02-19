@@ -1,10 +1,7 @@
 exports.handler = async function(event, context) {
   try {
-    // Log the HTTP method and raw POST data sent by CPAY
     console.log("Payment Fail Callback - HTTP Method:", event.httpMethod);
     console.log("Payment Fail Callback - Raw Body:", event.body);
-
-    // Attempt to parse the body as JSON for debugging, if possible
     try {
       const parsedData = event.body ? JSON.parse(event.body) : {};
       console.log("Payment Fail Callback - Parsed Body:", parsedData);
@@ -12,19 +9,18 @@ exports.handler = async function(event, context) {
       console.log("Payment Fail Callback - Body is not JSON, using raw text.");
     }
     
-    // For a failed payment, define the final URL to redirect to
     const finalUrl = "https://www.mnmlbynana.com/payment-failed";
     console.log("Payment Fail Callback - Final URL:", finalUrl);
-
-    // If the request is a POST, return a plain text response "OK"
+    
     if (event.httpMethod === 'POST') {
+      // For push notifications, return 200 OK with an empty body.
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/plain" },
-        body: "OK"
+        body: ""
       };
     } else {
-      // For browser (GET) requests, return the HTML redirect page
+      // For browser redirects, return the HTML redirect page.
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/html" },
