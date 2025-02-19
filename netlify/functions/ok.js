@@ -1,10 +1,7 @@
 exports.handler = async function(event, context) {
   try {
-    // Log the HTTP method and raw POST data sent by CPAY
     console.log("Payment OK Callback - HTTP Method:", event.httpMethod);
     console.log("Payment OK Callback - Raw Body:", event.body);
-
-    // Attempt to parse the body as JSON for debugging, if possible
     try {
       const parsedData = event.body ? JSON.parse(event.body) : {};
       console.log("Payment OK Callback - Parsed Body:", parsedData);
@@ -14,8 +11,6 @@ exports.handler = async function(event, context) {
     
     // Extract query parameters from the URL
     const { orderId, orderNumber, appSectionParams } = event.queryStringParameters || {};
-
-    // Build the final URL for redirection on your main site
     let finalUrl = `https://www.mnmlbynana.com/thank-you-page/${orderId || "default"}`;
     if (orderNumber) {
       finalUrl += `?orderNumber=${orderNumber}`;
@@ -24,16 +19,16 @@ exports.handler = async function(event, context) {
       }
     }
     console.log("Payment OK Callback - Final URL:", finalUrl);
-
-    // If the request is a POST (CPAY push), return a plain text response "OK"
+    
     if (event.httpMethod === 'POST') {
+      // For push notifications, return 200 OK with empty body.
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/plain" },
-        body: "OK"
+        body: ""
       };
     } else {
-      // For browser (GET) requests, return the HTML redirect page
+      // For browser redirects (GET requests), return an HTML redirect page.
       return {
         statusCode: 200,
         headers: { "Content-Type": "text/html" },
