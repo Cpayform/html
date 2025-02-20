@@ -20,35 +20,27 @@ exports.handler = async function(event, context) {
     }
     console.log("Payment OK Callback - Final URL:", finalUrl);
     
-    if (event.httpMethod === 'POST') {
-      // For push notifications, return 200 OK with empty body.
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "text/plain" },
-        body: ""
-      };
-    } else {
-      // For browser redirects (GET requests), return an HTML redirect page.
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "text/html" },
-        body: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta http-equiv="refresh" content="0; url=${finalUrl}" />
-            <script>
-              window.location.href = "${finalUrl}";
-            </script>
-            <title>Redirecting...</title>
-          </head>
-          <body>
-            <p>Payment successful. Redirecting...</p>
-          </body>
-          </html>
-        `
-      };
-    }
+    // Always return an HTML redirect page
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "text/html" },
+      body: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta http-equiv="refresh" content="0; url=${finalUrl}" />
+          <script>
+            window.location.href = "${finalUrl}";
+          </script>
+          <title>Redirecting...</title>
+        </head>
+        <body>
+          <!-- Hidden OK response for CPAY push -->
+          <p>Payment successful. Redirecting...</p>
+        </body>
+        </html>
+      `
+    };
   } catch (err) {
     console.error("Error in Payment OK Callback:", err);
     return {
