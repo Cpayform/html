@@ -1,15 +1,5 @@
 exports.handler = async function(event, context) {
   try {
-    console.log("Payment OK Callback - HTTP Method:", event.httpMethod);
-    console.log("Payment OK Callback - Raw Body:", event.body);
-    try {
-      const parsedData = event.body ? JSON.parse(event.body) : {};
-      console.log("Payment OK Callback - Parsed Body:", parsedData);
-    } catch (err) {
-      console.log("Payment OK Callback - Body is not JSON, using raw text.");
-    }
-    
-    // Extract query parameters from the URL
     const { orderId, orderNumber, appSectionParams } = event.queryStringParameters || {};
     let finalUrl = `https://www.mnmlbynana.com/thank-you-page/${orderId || "default"}`;
     if (orderNumber) {
@@ -18,9 +8,6 @@ exports.handler = async function(event, context) {
         finalUrl += `&appSectionParams=${appSectionParams}`;
       }
     }
-    console.log("Payment OK Callback - Final URL:", finalUrl);
-    
-    // Always return an HTML redirect page
     return {
       statusCode: 200,
       headers: { "Content-Type": "text/html" },
@@ -29,23 +16,18 @@ exports.handler = async function(event, context) {
         <html>
         <head>
           <meta http-equiv="refresh" content="0; url=${finalUrl}" />
-          <script>
-            window.location.href = "${finalUrl}";
-          </script>
+          <script>window.location.href = "${finalUrl}";</script>
           <title>Redirecting...</title>
+          <style>body{display:none;}</style>
         </head>
-        <body>
-          <!-- Hidden OK response for CPAY push -->
-          <p>Payment successful. Redirecting...</p>
-        </body>
+        <body></body>
         </html>
       `
     };
   } catch (err) {
-    console.error("Error in Payment OK Callback:", err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Internal Server Error", details: err.message })
+      body: "Internal Server Error"
     };
   }
 };
