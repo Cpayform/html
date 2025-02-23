@@ -1,0 +1,2 @@
+/ok    /.netlify/functions/ok   200
+/fail  /.netlify/functions/fail 200
