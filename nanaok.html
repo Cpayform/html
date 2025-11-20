@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Payment OK (Nana)</title>
+  <script>
+    window.onload = function() {
+      // You *can* still read params if you ever need them
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("orderId") || "default";
+      const appSectionParams = params.get("appSectionParams");
+
+      // New final URL on nana.mk (no orderId in the path)
+      let targetUrl = "https://www.nana.mk/thank-you-page";
+
+      // Optional: if you want to pass data, keep it as query params:
+      const extraParams = new URLSearchParams();
+      if (orderId && orderId !== "default") {
+        extraParams.set("orderId", orderId);
+      }
+      if (appSectionParams) {
+        extraParams.set("appSectionParams", appSectionParams);
+      }
+      const extraString = extraParams.toString();
+      if (extraString) {
+        targetUrl += "?" + extraString;
+      }
+
+      console.log("Redirecting to:", targetUrl);
+      window.location.href = targetUrl;
+    }
+  </script>
+</head>
+<body>
+  <p>Redirecting to the Nana thank-you page...</p>
+</body>
+</html>
