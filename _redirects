@@ -1,2 +1,4 @@
 /ok    /.netlify/functions/ok   200
 /fail  /.netlify/functions/fail 200
+/nanaok    /.netlify/functions/nanaok    200
+/nanafail  /.netlify/functions/nanafail  200
